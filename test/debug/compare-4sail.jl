@@ -30,12 +30,85 @@ rinf = (att - m) / sigb
 
 function Jfunc1(k, l, t)
     del_ = (k - l) * t;
-    @show del_;
     return abs(del_) > 1e-3 ? (exp(-l * t) - exp(-k * t)) / (k - l) : 0.5 * t * (exp(-k * t) + exp(-l * t)) * (1 - (del_^2) / 12)
 end;
 
 function Jfunc2(k, l, t)
     return (1 - exp(-(k + l) * t)) / (k + l)
+end;
+
+
+
+
+
+
+
+function test(l)
+    S = sigb;
+    K = 1 - sigf;
+    M = sqrt(K^2 - S^2)
+    c₁ = S * (exp(2*M*l) - 1) / ((M + K) * exp(2*M*l) + M - K);
+    c₂ = 1;
+    F(x) = ( c₁ * S * exp(-M*x) * (exp(2*M*x) - 1) + c₂ * exp(-M*x) * ((M - K) * exp(2*M*x) + M + K) ) / (2*M)
+    G(x) = ( c₁ * exp(-M*x) * ((M + K) * exp(2*M*x) + M - K) - c₂ * S * exp(-M*x) * (exp(2*M*x) - 1) ) / (2*M)
+
+    @info "test" F(0) G(0) F(l) G(l);
+end;
+
+
+
+function rho_tau_dd_codex(l)
+    S = sigb;
+    K = 1 - sigf;
+    M = sqrt(K^2 - S^2)
+    c₁ = S * (exp(2*M*l) - 1) / ((M + K) * exp(2*M*l) + M - K);
+    rdd = c₁;
+    tdd = ( c₁ * S * exp(-M*l) * (exp(2*M*l) - 1) + exp(-M*l) * ((M - K) * exp(2*M*l) + M + K) ) / (2*M);
+
+    return tdd, rdd
+end;
+
+
+
+function rho_tau_dd_mine(L)
+    s = sigb;
+    k = 1 - sigf - sigb;
+    a = k + s;
+    m = sqrt(a^2 - s^2);
+    c₁ = 1;
+    c₂ = s * (exp(m*L) - exp(-m*L)) / ((m + a) * exp(m*L) + (m - a) * exp(-m*L));
+    rdd = c₂;
+    tdd = ((m - a + c₂ * s) * exp(m*L) + (m + a + c₂ * s) * exp(-m*L)) / (2*m)
+
+    return tdd, rdd
+end;
+
+
+
+function rho_tau_sd_mine(L)
+    s = sigb;
+    k = 1 - sigf - sigb;
+    a = k + s;
+    m = sqrt(a^2 - s^2);
+    α = a - m
+    β = a + m
+
+    P = (s * sb + (ks + a) * sf) / (m^2 - ks^2)
+    Q = (s * sf - (ks - a) * sb) / (m^2 - ks^2)
+    R = Q / s * exp(-ks * L)
+    Δ = α * exp(-m * L) - β * exp(m * L)
+
+    C1 = ( β * R - P * exp(-m * L) ) / Δ
+    C2 = (-α * R + P * exp( m * L) ) / Δ
+
+    S(x) = exp(-ks * x)
+    F(x) = C1 * α * exp(m * x) + C2 * β * exp(-m * x) + P * exp(-ks * x)
+    G(x) = C1 * s * exp(m * x) + C2 * s * exp(-m * x) + Q * exp(-ks * x)
+
+    rsd = s * (C1 + C2) + Q
+    tsd = C1 * α * exp(m * L) + C2 * β * exp(-m * L) + P * exp(-ks * L)
+
+    return tsd, rsd
 end;
 
 
@@ -75,11 +148,11 @@ function rho_tau_double(l)
     a_dd = 1 - r_dd - t_dd;
     r_sd = ddsb * flai_10 * ks * l;
     t_sd = ddsf * flai_10 * ks * l;
-    t_ss =  1 - flai_10 * ks * l;
+    t_ss =  exp(-flai_10 * ks * l); #1 - flai_10 * ks * l;
     a_ss = 1 - r_sd - t_sd - t_ss;
     r_do = ddob * flai_10 * ko * l;
     t_do = ddof * flai_10 * ko * l;
-    t_oo = 1 - flai_10 * ko * l;
+    t_oo = exp(-flai_10 * ko * l); #1 - flai_10 * ko * l;
     a_oo = 1 - r_do - t_do - t_oo;
     for idb in 1:20
         r_dd_2 = r_dd + t_dd * r_dd * t_dd / (1 - r_dd * r_dd);
@@ -128,9 +201,15 @@ for l in 0.5:0.5:3
     T1,R1,TS1,RS1,SS1 = rho_tau_double(l);
     T2,R2,TS2,RS2,SS2 = rho_tau_double(2l);
     T3,R3,TS3,RS3 = rho_tau_2(T1,R1,TS1,RS1,SS1);
+    t4,r4 = rho_tau_dd_mine(l);
+    ts4,rs4 = rho_tau_sd_mine(l);
 
-    @info "debugging 1" l (t1,T1,t1/T1) (r1,R1,r1/R1) (ts1,TS1,ts1/TS1) (rs1,RS1,rs1/RS1);
-    @info "debugging 2" l (t2,T2,t2/T2) (r2,R2,r2/R2) (ts2,TS2,ts2/TS2) (rs2,RS2,rs2/RS2);
+    # @info "debugging 1" l (t1,T1,t1/T1) (r1,R1,r1/R1) (ts1,TS1,ts1/TS1) (rs1,RS1,rs1/RS1);
+    # @info "debugging 2" l (t2,T2,t2/T2) (r2,R2,r2/R2) (ts2,TS2,ts2/TS2) (rs2,RS2,rs2/RS2);
     # @info "debugging 3" l (t2,t3,t2/t3) (r2,r3,r2/r3) (ts2,ts3,ts2/ts3) (rs2,rs3,rs2/rs3);
     # @info "debugging 4" l (T2,T3,T2/T3) (R2,R3,R2/R3) (TS2,TS3,TS2/TS3) (RS2,RS3,RS2/RS3);
+    # @info "debugging 5" t1 T1 t4;
+    # @info "debugging 5" r1 R1 r4;
+    @info "debugging 6" ts1 TS1 ts4;
+    @info "debugging 6" rs1 RS1 rs4;
 end;
