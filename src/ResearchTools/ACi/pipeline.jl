@@ -53,7 +53,6 @@ function aci_fit!(
     else
         aci_fit(
             config,
-            cache,
             ps,
             AirLayer{FT}(),
             df,

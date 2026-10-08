@@ -34,7 +34,7 @@ aci_fit(config::SPACConfig{FT},
         df::DataFrame,
         params::Vector{String},
         initial_guess::Union{Nothing, Vector}) where {FT} =
-    aci_fit(config, ps, pst, config.METHODS.C3_AC_METHOD, config.METHODS.C3_AJ_METHOD, config.METHODS.C3_AP_METHOD, air, df, params, initial_guess);
+    aci_fit(config, ps, pst, config.METHODS.PS_METHODS.C3_AC_METHOD, config.METHODS.PS_METHODS.C3_AJ_METHOD, config.METHODS.PS_METHODS.C3_AP_METHOD, air, df, params, initial_guess);
 
 aci_fit(config::SPACConfig{FT},
         ps::LeafPhotosystem{FT},
@@ -43,7 +43,7 @@ aci_fit(config::SPACConfig{FT},
         df::DataFrame,
         params::Vector{String},
         initial_guess::Union{Nothing, Vector}) where {FT} =
-    aci_fit(config, ps, pst, config.METHODS.C4_AC_METHOD, config.METHODS.C4_AJ_METHOD, config.METHODS.C4_AP_METHOD, air, df, params, initial_guess);
+    aci_fit(config, ps, pst, config.METHODS.PS_METHODS.C4_AC_METHOD, config.METHODS.PS_METHODS.C4_AJ_METHOD, config.METHODS.PS_METHODS.C4_AP_METHOD, air, df, params, initial_guess);
 
 
 """

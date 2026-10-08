@@ -3,6 +3,7 @@ using Test
 
 import Emerald.Namespace as ENS
 import Emerald.ResearchTools as ERT
+import Photosynthesis as PS
 
 
 @testset "Emerald ResearchTools" verbose = true begin
@@ -13,11 +14,11 @@ import Emerald.ResearchTools as ERT
 
     @testset "C3 Jmax" begin
         config = ERT.LeafLevelSetup.leaf_level_config(Float64);
-        config.METHODS.C3_AC_METHOD = ENS.AcMethodC3VcmaxPi();
-        config.METHODS.C3_AJ_METHOD = ENS.AjMethodC3JmaxPi();
-        config.METHODS.C3_AP_METHOD = ENS.ApMethodC3Vcmax();
-        config.METHODS.COLIMIT_J = ENS.ColimitJCLM(Float64);
-        config.METHODS.FLUORESCENCE_METHOD_C3 = ENS.KNFluorescenceModel{Float64}();
+        config.METHODS.PS_METHODS.C3_AC_METHOD = PS.AcMethodC3VcmaxPi();
+        config.METHODS.PS_METHODS.C3_AJ_METHOD = PS.AjMethodC3JmaxPi();
+        config.METHODS.PS_METHODS.C3_AP_METHOD = PS.ApMethodC3Vcmax();
+        config.METHODS.PS_METHODS.COLIMIT_J = PS.ColimitJCLM(Float64);
+        config.METHODS.PS_METHODS.FLUORESCENCE_METHOD_C3 = PS.KNFluorescenceModel{Float64}();
         result = ERT.ACi.aci_fit!(config, df3, "C3", ["Vcmax25", "Jmax25"]);
         @test !any(isnan.(result[1]));
         result = ERT.ACi.aci_fit!(config, df3, "C3", ["Vcmax25", "Jmax25", "Rd25"]);
@@ -28,11 +29,11 @@ import Emerald.ResearchTools as ERT
 
     @testset "C3 Vqmax" begin
         config = ERT.LeafLevelSetup.leaf_level_config(Float64);
-        config.METHODS.C3_AC_METHOD = ENS.AcMethodC3VcmaxPi();
-        config.METHODS.C3_AJ_METHOD = ENS.AjMethodC3VqmaxPi();
-        config.METHODS.C3_AP_METHOD = ENS.ApMethodC3Vcmax();
-        config.METHODS.COLIMIT_J = ENS.SerialColimit();
-        config.METHODS.FLUORESCENCE_METHOD_C3 = ENS.CytochromeFluorescenceModel();
+        config.METHODS.PS_METHODS.C3_AC_METHOD = PS.AcMethodC3VcmaxPi();
+        config.METHODS.PS_METHODS.C3_AJ_METHOD = PS.AjMethodC3VqmaxPi();
+        config.METHODS.PS_METHODS.C3_AP_METHOD = PS.ApMethodC3Vcmax();
+        config.METHODS.PS_METHODS.COLIMIT_J = PS.SerialColimit();
+        config.METHODS.PS_METHODS.FLUORESCENCE_METHOD_C3 = PS.CytochromeFluorescenceModel();
         result = ERT.ACi.aci_fit!(config, df3, "C3", ["Vcmax25", "b₆f"]);
         @test !any(isnan.(result[1]));
         result = ERT.ACi.aci_fit!(config, df3, "C3", ["Vcmax25", "b₆f", "Rd25"]);
@@ -43,8 +44,8 @@ import Emerald.ResearchTools as ERT
 
     @testset "C4 Vcmax" begin
         config = ERT.LeafLevelSetup.leaf_level_config(Float64);
-        config.METHODS.C4_AP_METHOD = ENS.ApMethodC4VcmaxPi();
-        config.METHODS.FLUORESCENCE_METHOD_C4 = ENS.KNFluorescenceModel{Float64}();
+        config.METHODS.PS_METHODS.C4_AP_METHOD = PS.ApMethodC4VcmaxPi();
+        config.METHODS.PS_METHODS.FLUORESCENCE_METHOD_C4 = PS.KNFluorescenceModel{Float64}();
         result = ERT.ACi.aci_fit!(config, df4, "C4", ["Vcmax25"]);
         @test !any(isnan.(result[1]));
         result = ERT.ACi.aci_fit!(config, df4, "C4", ["Vcmax25", "Rd25"]);
@@ -53,8 +54,8 @@ import Emerald.ResearchTools as ERT
 
     @testset "C4 Vpmax" begin
         config = ERT.LeafLevelSetup.leaf_level_config(Float64);
-        config.METHODS.C4_AP_METHOD = ENS.ApMethodC4VpmaxPi();
-        config.METHODS.FLUORESCENCE_METHOD_C4 = ENS.KNFluorescenceModel{Float64}();
+        config.METHODS.PS_METHODS.C4_AP_METHOD = PS.ApMethodC4VpmaxPi();
+        config.METHODS.PS_METHODS.FLUORESCENCE_METHOD_C4 = PS.KNFluorescenceModel{Float64}();
         result = ERT.ACi.aci_fit!(config, df4, "C4", ["Vcmax25"]);
         @test !any(isnan.(result[1]));
         result = ERT.ACi.aci_fit!(config, df4, "C4", ["Vcmax25", "Vpmax25"]);

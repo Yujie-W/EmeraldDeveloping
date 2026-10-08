@@ -54,21 +54,21 @@ aci_fit(config::SPACConfig{FT},
         γ_lim_max = 40;
         for dfr in eachrow(df)
             # estimate the minimum respiration rate limit
-            rd_lim_min = nanmax([rd_lim_min, -dfr.A_NET / temperature_correction(config.METHODS.TD_R_C3, dfr.T_LEAF)]);
+            rd_lim_min = nanmax([rd_lim_min, -dfr.A_NET / temperature_correction(config.METHODS.PS_METHODS.TD_R_C3, dfr.T_LEAF)]);
             # estimate the maximum Γ_star limit
-            γ_lim_max = nanmin([γ_lim_max, dfr.P_I / temperature_correction(config.METHODS.TD_Γ, dfr.T_LEAF)]);
+            γ_lim_max = nanmin([γ_lim_max, dfr.P_I / temperature_correction(config.METHODS.PS_METHODS.TD_Γ, dfr.T_LEAF)]);
         end;
         # loop through the data once again to guess the Vcmax and Jmax
         vcmax_guess = 5;
         jmax_guess = 10;
         ps.trait.r_d25 = rd_lim_min * 1.2;
-        config.METHODS.TD_Γ.VAL_REF = γ_lim_max * 0.8;
+        config.METHODS.PS_METHODS.TD_Γ.VAL_REF = γ_lim_max * 0.8;
         for dfr in eachrow(df)
-            photosystem_temperature_dependence!(config, ps, air, dfr.T_LEAF);
-            vcmax = (dfr.A_NET + ps.auxil.r_d) * (dfr.P_I + ps.auxil.k_m) / (dfr.P_I - ps.auxil.γ_star) / temperature_correction(config.METHODS.TD_VCMAX_C3, dfr.T_LEAF);
+            photosystem_temperature_dependence!(config.METHODS.PS_METHODS, ps, air.state.p_air, dfr.T_LEAF);
+            vcmax = (dfr.A_NET + ps.auxil.r_d) * (dfr.P_I + ps.auxil.k_m) / (dfr.P_I - ps.auxil.γ_star) / temperature_correction(config.METHODS.PS_METHODS.TD_VCMAX_C3, dfr.T_LEAF);
             vcmax_guess = nanmax([vcmax_guess, vcmax]);
             vcmax_guess = nanmin([vcmax_guess, 100]);
-            jmax = (dfr.A_NET + ps.auxil.r_d) * (4*dfr.P_I + 8*ps.auxil.γ_star) / (dfr.P_I - ps.auxil.γ_star) * 1.2 / temperature_correction(config.METHODS.TD_JMAX, dfr.T_LEAF);
+            jmax = (dfr.A_NET + ps.auxil.r_d) * (4*dfr.P_I + 8*ps.auxil.γ_star) / (dfr.P_I - ps.auxil.γ_star) * 1.2 / temperature_correction(config.METHODS.PS_METHODS.TD_JMAX, dfr.T_LEAF);
             jmax_guess = nanmax([jmax_guess, jmax]);
             jmax_guess = nanmin([jmax_guess, 200]);
         end;
@@ -136,7 +136,7 @@ aci_rmse(config::SPACConfig{FT},
     end;
     if "Γstar25" in params
         iparam = findfirst(params .== "Γstar25");
-        config.METHODS.TD_Γ.VAL_REF = xxx[iparam];
+        config.METHODS.PS_METHODS.TD_Γ.VAL_REF = xxx[iparam];
     end;
     if "Rd25" in params
         iparam = findfirst(params .== "Rd25");
