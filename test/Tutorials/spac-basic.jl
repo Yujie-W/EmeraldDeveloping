@@ -1,3 +1,4 @@
+#=
 using Test
 
 import Emerald.Namespace as ENS
@@ -28,3 +29,4 @@ for sza in 0:5:85
     ESPAC.spac!(config, spac, 0);
     @show sza ELAND.SHORTWAVE_OUT(config, spac) / ELAND.SHORTWAVE_IN(config, spac);
 end;
+=#

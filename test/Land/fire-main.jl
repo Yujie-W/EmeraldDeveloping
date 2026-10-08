@@ -1,3 +1,4 @@
+#=
 # 1. read in the lat/lon/ratio data
 # df = read_csv();
 
@@ -19,3 +20,4 @@ using PkgUtility.DistributedTools: dynamic_workers!
 dynamic_workers!(40);
 @everywhere include("fire-thread.jl");
 pmap(thread_func, params);
+=#

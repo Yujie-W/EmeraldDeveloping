@@ -5,17 +5,18 @@ import Emerald.LeafOptics as ELO
 import Emerald.Namespace as ENS
 import Emerald.Photosynthesis as EPS
 import Emerald.ResearchTools as ERT
+import Photosynthesis as PS
 
 
 @testset "Leaf Level Fluorescence" verbose = true begin
     @testset "C3 - Jmax + Platespect" verbose = true begin
         # these config settings are the default methods, I am just being explicit here
         config = ERT.LeafLevelSetup.leaf_level_config(Float64);
-        config.METHODS.C3_AC_METHOD = ENS.AcMethodC3VcmaxPi();
-        config.METHODS.C3_AJ_METHOD = ENS.AjMethodC3JmaxPi();
-        config.METHODS.C3_AP_METHOD = ENS.ApMethodC3Vcmax();
-        config.METHODS.COLIMIT_J = ENS.ColimitJCLM(Float64);
-        config.METHODS.FLUORESCENCE_METHOD_C3 = ENS.KNFluorescenceModel{Float64}();
+        config.METHODS.PS_METHODS.C3_AC_METHOD = PS.AcMethodC3VcmaxPi();
+        config.METHODS.PS_METHODS.C3_AJ_METHOD = PS.AjMethodC3JmaxPi();
+        config.METHODS.PS_METHODS.C3_AP_METHOD = PS.ApMethodC3Vcmax();
+        config.METHODS.PS_METHODS.COLIMIT_J = PS.ColimitJCLM(Float64);
+        config.METHODS.PS_METHODS.FLUORESCENCE_METHOD_C3 = PS.KNFluorescenceModel{Float64}();
         cache = ERT.LeafLevelSetup.leaf_level_spac_cache(config);
         leaf = ERT.LeafLevelSetup.leaf_level_leaf(config, "C3");
         air = ENS.AirLayer{Float64}();
@@ -38,7 +39,7 @@ import Emerald.ResearchTools as ERT
         p_i = 20.0;                                                 # Pa
         ppar = photon_ppar' * config.CONSTANTS.SPECTRA.ΔΛ * 1e6;    # μmol m⁻² s⁻¹
         t = 298.15;                                                 # K
-        EPS.photosynthesis!(config, cache, leaf.photosystem, air, [p_i,], [ppar,], t);
+        PS.photosynthesis!(config.METHODS.PS_METHODS, leaf.photosystem, air.state.p_air, [ppar,], t, [p_i,]);
 
         # compare the fluorescence outputs
         sif_b = (leaf.bio.auxil.mat_b * rad_excite) .* leaf.photosystem.auxil.ϕ_f;

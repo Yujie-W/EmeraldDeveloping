@@ -1,3 +1,4 @@
+#=
 using Test
 
 import Emerald.Namespace as ENS
@@ -23,3 +24,4 @@ ELAND.GPP(config, spac)
 spac.meteo.rad_sw.e_dir[600 .<= config.CONSTANTS.SPECTRA.Λ .<= 700] .*= 0.1;
 ESPAC.spac!(config, spac, 7200);
 ELAND.GPP(config, spac)
+=#

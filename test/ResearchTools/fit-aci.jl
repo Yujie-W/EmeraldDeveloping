@@ -6,7 +6,7 @@ import Emerald.ResearchTools as ERT
 import Photosynthesis as PS
 
 
-@testset "Emerald ResearchTools" verbose = true begin
+@testset "Fit A-Ci curve" verbose = true begin
     df3 = read_csv(joinpath(@__DIR__, "../..", "data/examples", "C3-ACi.csv"));
     df4 = read_csv(joinpath(@__DIR__, "../..", "data/examples", "C4-ACi.csv"));
     df3.T_LEAF .+= 273.15;  # convert to Kelvin

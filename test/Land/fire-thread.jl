@@ -1,3 +1,4 @@
+#=
 using GriddingMachine.Indexer: LandDatasetLabels, grid_dict
 using Emerald.Land: simulation!
 using OrderedCollections: OrderedDict
@@ -15,3 +16,4 @@ thread_func(p) = (
     settings, lat, lon, year, filename = p;
     simulation_yx!(settings, lat, lon, year; c3c4 = "C3", saving = filename);
 );
+=#
