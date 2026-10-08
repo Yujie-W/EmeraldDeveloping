@@ -16,17 +16,6 @@ using ..Namespace: Leaf
 using ..Namespace: AirLayer
 using ..Namespace: BulkSPAC, SPACCache, SPACConfig
 
-# these are for the fitting of the A-Ci curve
-# using ..Namespace: Arrhenius, ArrheniusPeak, ArrheniusPeak2, Q10, Q10Peak, Q10PeakHT, Q10PeakLTHT
-# using ..Namespace: MinimumColimit, QuadraticColimit, SerialColimit, SquareColimit, UnionColimit
-# using ..Namespace: AcMethodC3VcmaxPi, AcMethodC4Vcmax
-# using ..Namespace: AjMethodC3JmaxPi, AjMethodC3VqmaxPi, AjMethodC4JPSII
-# using ..Namespace: ApMethodC3Inf, ApMethodC3Vcmax, ApMethodC4VcmaxPi, ApMethodC4VpmaxPi
-# using ..Namespace: CytochromeFluorescenceModel, KNFluorescenceModel, QLFluorescenceModel, QLFluorescenceModelHan
-# using ..Namespace: GeneralC3Trait, C3State
-# using ..Namespace: GeneralC4Trait, C4State
-# using ..Namespace: ColimitCJCLMC3, ColimitCJCLMC4, ColimitIPCLM, ColimitJCLM, ηCTDJohnson, ηLTDJohnson
-# using ..Namespace: LeafPhotosystem, LeafPhotosystemAuxil
 
 # functions to use with stomatal models
 include("stomata/derivative.jl");

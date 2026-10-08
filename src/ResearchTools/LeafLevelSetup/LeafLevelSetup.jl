@@ -1,7 +1,7 @@
 module LeafLevelSetup
 
-using ..Namespace: SPACCache, SPACConfig
-using ..Namespace: C3State, C4State, GeneralC3Trait, GeneralC4Trait, Leaf, LeafPhotosystem, LeafPhotosystemAuxil
+using ..Namespace: SPACCache, SPACConfig, Leaf
+using Photosynthesis: C3State, C4State, C3Trait, C4Trait, LeafPhotosystem, LeafPhotosystemAuxil
 
 
 include("cache.jl");

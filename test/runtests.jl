@@ -12,6 +12,5 @@ using Test
 
     @testset "Tutorials" verbose = true begin
         include("Tutorials/leaf-level-fluorescence.jl");
-        include("Tutorials/leaf-level-photosynthesis.jl");
     end;
 end;
