@@ -1,63 +1,29 @@
 # Emerald
 
-**E**arth **M**odeling with **E**nhanced **R**epresentations of **A**ir and **L**and **D**ynamics
+Vegetation makes the land a green piece out of the blue marble (Earth). Therefore, we call the model Emerald, standing for: **E**arth **M**odeling with **E**nhanced **R**epresentations of **A**reo-Aqua and **L**and **D**ynamics.
+
+## Difference with Emerald.jl
+
+This repository is an under continuous development, and therefore may have unexpected results, particularly for the code not covered in the UI and CI tests. For a more stable release, we refer the users to [**Emerald.jl**](https://github.com/silicormosia/Emerald.jl.git), where we keep the stable versions used in formal publications. However, both models are named **Emerald** and would conflict if you include both in your project.
+
+Therefore, if you need the most recent features, you are recommended to use EmeraldDeveloping (this repo). If you need a stable version for general production, [**Emerald.jl**](https://github.com/silicormosia/Emerald.jl.git) is a better option.
 
 ## Model components
-- `Emerald` Land Surface Model based on CliMA Land (Remastered)
-- `Sapphire` Ocean Model based on CliMA Ocean (To be implemented)
-- `Diamond` Atmosphere Model based on CliMA Atmos (To be implemented)
+- `Land` Land Surface Model based on CliMA Land (Remastered)
+- `Ocean` Ocean Model (RT under development)
 
 ## Installation
 `Emerald` is not a registered package, to use `Emerald`, one need to install it manually through Julia REPL:
 ```julia
 using Pkg;
-Pkg.add(PackageSpec(url="https://github.com/Yujie-W/Emerald.git"));
+Pkg.add(PackageSpec(url="https://github.com/Yujie-W/EmeraldDeveloping.git"));
 ```
 
 To use more testing features, you may install a specific branch, say `wyujie`
 ```julia
 using Pkg;
-Pkg.add(PackageSpec(url="https://github.com/Yujie-W/Emerald.git", rev="wyujie"));
+Pkg.add(PackageSpec(url="https://github.com/Yujie-W/EmeraldDeveloping.git", rev="wyujie"));
 ```
 
 ## Tutorials
-For the details about how to use Emerald, you may look into the `test/tutorial` folder, and subscribe YouTube channel [`Plant Form & Function`](https://www.youtube.com/channel/UCTxiti8ntVAiU4sJ5N2kTnQ).
-
-## Change logs
-| Version Tag | Linear Change History                     |
-|:------------|:------------------------------------------|
-| Note        | Historty in ResearchProjects              |
-| A1          | Version used for initial run              |
-| A2          | Use minimum beta instead of mean beta     |
-|             | Use moving average optimal T from CLM5    |
-| A3          | Add vertical Vcmax profile                |
-| A4          | Extend PAR definition to 400-750 nm       |
-| A5          | Fix SIF yield scaling bug                 |
-|             | Add ePAR scenario                         |
-|             | Add prescibed CI option                   |
-| Note        | History in ClimaLand-0.1                  |
-| A6          | Fix a bug in Medlyn model (coeff 1.6)     |
-| A7          | Add quadratic colimitation to C3 J (0.7)  |
-| Note        | History in ClimaLand-0.2                  |
-| B1          | Use Land v0.2                             |
-| B2          | Add temperature dependency for K_D (VJP)  |
-| B3          | Add limits to dgdt                        |
-|             | Fix a bug in critical flow (not used)     |
-|             | Fix a bug in dif rad SIF (not in v0.1)    |
-| Note        | Moving to Emerald from CliMA Land         |
-| B4*         | Add SZA < 89 degree limitation            |
-|             | Swtich to global run per time step        |
-|             | Add LAI = 0 case for SPAC                 |
-|             | Add state field to SPAC                   |
-|             | Pass water and enerby budgets             |
-|             | Scale beta based on roots with + flow     |
-|             | Add root disconnection feature (LAI => 0) |
-|             | Use exp functions in radiation extinction |
-|             | Use δLAI per canopy layer (still uniform) |
-|             | Add beta function type LIDF               |
-|             | Fix a bug in Verhoef LIDF (not used)      |
-|             | Add soil trace gas diffusion (e.g. H₂O)   |
-| 2023-06-14  | Run soil only RT as well in global model  |
-|||
-
-`*` for current development branch
+For the details about how to use Emerald, you may look into the `test/tutorial` folder, and subscribe [`Bilibili`](https://space.bilibili.com/22576885) and [`Bilibili Live`](http://live.bilibili.com/14243417).

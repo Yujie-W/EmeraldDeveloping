@@ -1,0 +1,33 @@
+# This file contains function to compute the partial derivatives of Θ versus E for EllerSM optimality model
+#######################################################################################################################################################################################################
+#
+# Changes to this method
+# General
+#     2023-Oct-16: make sure maximum gsc does not exceed g_CO₂_b
+#     2024-Oct-16: make sure gsm is positive
+#     2024-Oct-30: add leaf connection check
+# Bug fixes
+#     2025-Nov-19: set min A to 0.01 when computing ∂Θ∂E
+#
+#######################################################################################################################################################################################################
+∂Θ∂E!(config::SPACConfig{FT}, cache::SPACCache{FT}, sm::EllerSM{FT}, leaf::Leaf{FT}, air::AirLayer{FT}) where {FT} = (
+    # if leaf xylem is not connected, do nothing
+    if !leaf.xylem.state.connected
+        leaf.flux.auxil.∂Θ∂E .= 0;
+
+        return nothing
+    end;
+
+    (; NEW_C4_STOMATAL_METHODS) = config.FEATURES;
+
+    # compute the ∂Θ∂E when leaf xylem is connected
+    e = flow_out(leaf);
+    δe = max(min(e / 100, FT(1e-6)), FT(1e-7));
+    dedp1 = ∂E∂P(leaf, e; δe = δe);
+    dedp2 = ∂E∂P(leaf, e; δe = -δe);
+    dkde  = (dedp2 - dedp1) / δe;
+    new_an = NEW_C4_STOMATAL_METHODS ? min.(leaf.photosystem.auxil.a_p, leaf.photosystem.auxil.a_j) .- leaf.photosystem.auxil.r_d : leaf.flux.auxil.a_n;
+    leaf.flux.auxil.∂Θ∂E .= dkde .* max.(FT(0.01), new_an) ./ dedp1;
+
+    return nothing
+);

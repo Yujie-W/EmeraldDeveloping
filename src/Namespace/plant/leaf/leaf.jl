@@ -1,0 +1,125 @@
+#######################################################################################################################################################################################################
+#
+# Changes to this struct
+# General
+#     2024-Jul-25: add struct Leaf
+#
+#######################################################################################################################################################################################################
+"""
+
+$(TYPEDEF)
+
+Struct that contains the fields within a canopy layer (or a leaf)
+
+# Fields
+
+$(TYPEDFIELDS)
+
+"""
+Base.@kwdef mutable struct Leaf{FT}
+    "Leaf biophysics struct"
+    bio::LeafBio{FT}
+    "Extraxylary capacitor struct"
+    capacitor::ExtraXylemCapacitor{FT} = ExtraXylemCapacitor{FT}()
+    "Leaf energy struct"
+    energy::LeafEnergy{FT} = LeafEnergy{FT}()
+    "Leaf flux struct"
+    flux::LeafFlux{FT}
+    "Photosynthesis system struct"
+    photosystem::LeafPhotosystem{FT}
+    "Leaf xylem hydraulics struct"
+    xylem::XylemHydraulics{FT}
+end;
+
+
+"""
+
+    Leaf(config::SPACConfig{FT}) where {FT}
+
+Return the Leaf struct with initialized energy states, given
+- `config` `SPACConfig` type struct
+- `c3c4` String to specify whether the leaf is C3 or C4, default to "C3"
+
+"""
+Leaf(config::SPACConfig{FT}, c3c4::String = "C3") where {FT} = (
+    leaf = Leaf{FT}(bio = LeafBio(config), flux = LeafFlux(config), photosystem = LeafPhotosystem(config, c3c4), xylem = XylemHydraulics(config));
+    leaf.xylem.trait.cp = 1780;
+    leaf.xylem.trait.k_max = 0.04;
+
+    return leaf
+);
+
+kill_plant!(st::Leaf{FT}) where {FT} = (
+    kill_plant!(st.bio);
+    kill_plant!(st.capacitor);
+    kill_plant!(st.energy);
+    kill_plant!(st.flux);
+    kill_plant!(st.photosystem);
+    kill_plant!(st.xylem);
+
+    return nothing
+);
+
+
+#######################################################################################################################################################################################################
+#
+# Changes to this struct
+# General
+#     2024-Jul-25: add struct LeafStates
+#
+#######################################################################################################################################################################################################
+"""
+
+$(TYPEDEF)
+
+Struct to save leaf states (collections of states)
+
+# Fields
+
+$(TYPEDFIELDS)
+
+"""
+mutable struct LeafStates{FT<:AbstractFloat}
+    "Leaf biophysics state"
+    bio::LeafBioState{FT}
+    "Extraxylary capacitor state"
+    capacitor::ExtraXylemCapacitorState{FT}
+    "Leaf energy state"
+    energy::LeafEnergyState{FT}
+    "Leaf flux state"
+    flux::LeafFluxState{FT}
+    "Photosynthesis system state"
+    photosystem::Union{C3State{FT}, C4State{FT}}
+    "Leaf xylem hydraulics state"
+    xylem::XylemHydraulicsState{FT}
+end;
+
+LeafStates(leaf::Leaf{FT}) where {FT} = LeafStates{FT}(
+            deepcopy(leaf.bio.state),
+            deepcopy(leaf.capacitor.state),
+            deepcopy(leaf.energy.state),
+            deepcopy(leaf.flux.state),
+            deepcopy(leaf.photosystem.state),
+            deepcopy(leaf.xylem.state));
+
+sync_state!(leaf::Leaf{FT}, states::LeafStates{FT}) where {FT} = (
+    sync_state!(leaf.bio.state, states.bio);
+    sync_state!(leaf.capacitor.state, states.capacitor);
+    sync_state!(leaf.energy.state, states.energy);
+    sync_state!(leaf.flux.state, states.flux);
+    sync_state!(leaf.photosystem.state, states.photosystem);
+    sync_state!(leaf.xylem.state, states.xylem);
+
+    return nothing
+);
+
+sync_state!(states::LeafStates{FT}, leaf::Leaf{FT}) where {FT} = (
+    sync_state!(states.bio, leaf.bio.state);
+    sync_state!(states.capacitor, leaf.capacitor.state);
+    sync_state!(states.energy, leaf.energy.state);
+    sync_state!(states.flux, leaf.flux.state);
+    sync_state!(states.photosystem, leaf.photosystem.state);
+    sync_state!(states.xylem, leaf.xylem.state);
+
+    return nothing
+);

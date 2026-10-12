@@ -1,2 +1,4 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+Emerald = "56ca4449-d59c-41e3-9ae8-0f89b45aadb6"
+Photosynthesis = "537ec7c9-aaee-45d0-8af0-4b77892958a6"

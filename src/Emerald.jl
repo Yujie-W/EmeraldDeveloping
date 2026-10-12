@@ -2,32 +2,33 @@ module Emerald
 
 using Revise
 
-export EmeraldData
-export EmeraldEarth
-export EmeraldFrontier
-export EmeraldIO
-export EmeraldLand
-export EmeraldMath
-export EmeraldPhysics
-export EmeraldTest
-export EmeraldUtility
+
+# requires DataCenter to read the input data
+include("Namespace/Namespace.jl");
+
+# depends on Namespace
+include("LeafOptics/LeafOptics.jl");
+include("Photosynthesis/EPhotosynthesis.jl");
+include("SoilHydraulics/SoilHydraulics.jl");
+
+# depends on LeafOptics
+include("CanopyOptics/CanopyOptics.jl");
+
+# depends on SoilHydraulics
+include("PlantHydraulics/PlantHydraulics.jl");
+
+# depends on PlantHydraulics
+include("EnergyBudget/EnergyBudget.jl");
+include("StomatalModels/StomatalModels.jl");
+
+# depends on StomatalModels
+include("SPAC/SPAC.jl");
+
+# depends on SPAC
+include("Land/Land.jl");
+
+# research tools
+include("ResearchTools/ResearchTools.jl");
 
 
-# include the submodules
-include("../EmeraldIO/EmeraldIO.jl");
-include("../EmeraldPhysics/EmeraldPhysics.jl");
-include("../EmeraldTest/EmeraldTest.jl");
-include("../EmeraldUtility/EmeraldUtility.jl");
-
-include("../EmeraldMath/EmeraldMath.jl");
-
-include("../EmeraldLand/EmeraldLand.jl");
-include("../EmeraldOcean/EmeraldOcean.jl");
-
-include("../EmeraldData/EmeraldData.jl");
-
-include("../EmeraldEarth/EmeraldEarth.jl");
-include("../EmeraldFrontier/EmeraldFrontier.jl");
-
-
-end; # module
+end # module Emerald
