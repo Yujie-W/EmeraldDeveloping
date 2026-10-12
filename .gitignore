@@ -21,7 +21,8 @@ docs/site/
 # It records a fixed state of all packages used by the project. As such, it should not be
 # committed for packages, but should be committed for applications that require a static
 # environment.
-Manifest.toml
+# Allow Manifest.toml to be committed so that the exact package versions used by the project are recorded
+# Manifest.toml
 
 # Generated file
 *.csv
