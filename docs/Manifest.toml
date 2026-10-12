@@ -2,7 +2,7 @@
 
 julia_version = "1.12.7"
 manifest_format = "2.0"
-project_hash = "8adaddabeec2989229c94a39b577435f642be3b1"
+project_hash = "4d1a60e614b452d54c6bc942416b14a90512d4fd"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -837,9 +837,7 @@ version = "2.8.8"
 
 [[deps.Photosynthesis]]
 deps = ["DocStringExtensions", "PkgUtility", "Test"]
-git-tree-sha1 = "caaf32ee1fd6b226cff108e0b7f7f69937f56321"
-repo-rev = "wyujie"
-repo-url = "https://github.com/Yujie-W/Photosynthesis.jl.git"
+git-tree-sha1 = "413f469bb0b063a153daa4d81dcdc08ef8382ee1"
 uuid = "537ec7c9-aaee-45d0-8af0-4b77892958a6"
 version = "0.5.0"
 
@@ -854,9 +852,7 @@ weakdeps = ["REPL"]
 
 [[deps.PkgUtility]]
 deps = ["CSV", "DataFrames", "Dates", "Distributed", "DocStringExtensions", "GLM", "JLD2", "OrderedCollections", "Pkg", "Statistics", "StatsBase", "TOML", "Test", "YAML"]
-git-tree-sha1 = "fa032de5f69c4164f3181fa077013adf50453d79"
-repo-rev = "wyujie"
-repo-url = "https://github.com/Yujie-W/PkgUtility.jl.git"
+git-tree-sha1 = "f77541ed81df69f9b4c08a94b4fe2f7ef86b964a"
 uuid = "0d262f2c-28e9-492c-8e19-d7a5c4f11611"
 version = "0.3.1"
 
