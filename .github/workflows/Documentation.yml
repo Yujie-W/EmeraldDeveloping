@@ -6,6 +6,9 @@ on:
     tags: '*'
   pull_request:
 
+permissions:
+  contents: write
+
 jobs:
   docs-build:
     runs-on: ubuntu-latest

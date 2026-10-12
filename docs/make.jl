@@ -41,5 +41,5 @@ deploydocs(
     repo = "github.com/Yujie-W/EmeraldDeveloping.git",
     target = "build",
     devbranch = "main",
-    push_preview = true
+    push_preview = false
 );
