@@ -7,6 +7,7 @@ using Revise
 include("Namespace/Namespace.jl");
 
 # depends on Namespace
+include("CanopyAirSpace/CanopyAirSpace.jl");
 include("LeafOptics/LeafOptics.jl");
 include("Photosynthesis/EPhotosynthesis.jl");
 include("SoilHydraulics/SoilHydraulics.jl");
