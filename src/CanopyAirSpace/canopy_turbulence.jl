@@ -2,8 +2,34 @@
 
 
 
+"""
+    wind_profile(; hc=21, pai=5.051612734794617, zref=46, uref=5.169,
+                   dz=0.5, L=Inf, minWind=0.1,
+                   outputDir=joinpath(@__DIR__, "wind_profile_results"),
+                   saveResults=true, makePlot=true, showPlot=true)
 
+- `hc` Canopy height: spac.plant.zs[end]
+- `pai` Plan area index: spac.canopy.lai + spac.canopy.sai
+- `zref` Reference height for wind speed measurement: spac.info.z_air[end]
+- `uref` Reference wind speed at reference height zref (#TODO: how to compute this from wind speed? use wind speed directly for now)
+- `dz` Heigh per layer: spac.info.z_air[2] - spac.info.z_air[1]
+- `L` Obukhov length: use Inf for now (#TODO: need to compute it in a function or within this function in the future)
+- `minWind` Minimum wind speed: use 0.1 for now
+
+"""
 function canopy_turbulence!(spac::BulkSPAC{FT}, dt::Number) where {FT<:AbstractFloat}
+	hc = spac.plant.zs[end];
+	pai = spac.canopy.lai + spac.canopy.sai;
+	zref = spac.info.z_air[end];
+	uref = 5.169; # use wind speed directly for now
+	dz = spac.info.z_air[2] - spac.info.z_air[1];
+	L = Inf; # Obukhov length
+	minWind = 0.1;
+
+
+
+
+
     # define the constants used for the calculations
     k_von_karman = K_VON_KARMAN(FT);
     drag_coef = FT(0.25);
