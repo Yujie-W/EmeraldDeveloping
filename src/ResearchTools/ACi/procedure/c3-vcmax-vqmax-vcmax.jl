@@ -65,7 +65,7 @@ aci_fit(config::SPACConfig{FT},
         config.METHODS.PS_METHODS.TD_Γ.VAL_REF = γ_lim_max * 0.8;
         for dfr in eachrow(df)
             photosynthesis!(config.METHODS.PS_METHODS, ps, air.state.p_air, [dfr.PPAR,], dfr.T_LEAF, [dfr.P_I,]);
-            vcmax = (dfr.A_NET + ps.auxil.r_d) * (dfr.P_I + ps.auxil.k_m[0]) / (dfr.P_I - ps.auxil.γ_star) / temperature_correction(config.METHODS.PS_METHODS.TD_VCMAX_C3, dfr.T_LEAF);
+            vcmax = (dfr.A_NET + ps.auxil.r_d) * (dfr.P_I + ps.auxil.k_m[1]) / (dfr.P_I - ps.auxil.γ_star) / temperature_correction(config.METHODS.PS_METHODS.TD_VCMAX_C3, dfr.T_LEAF);
             vcmax_guess = nanmax([vcmax_guess, vcmax]);
             vcmax_guess = nanmin([vcmax_guess, 100]);
             j_1 = (dfr.A_NET + ps.auxil.r_d) * (4*dfr.P_I + 8*ps.auxil.γ_star) / (dfr.P_I - ps.auxil.γ_star) * ps.auxil.η[1];
