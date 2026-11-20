@@ -8,7 +8,7 @@ using PkgUtility.UniversalConstants: F_O₂, GAS_R
 
 using Photosynthesis: Arrhenius, ArrheniusPeak, Q10, Q10Peak
 using Photosynthesis: LeafPhotosystem
-using Photosynthesis: colimit_photosynthesis!, light_limited_rate!, photosystem_coefficients!, photosystem_electron_transport!, photosystem_temperature_dependence!, product_limited_rate!, rubisco_limited_rate!, temperature_corrected_value
+using Photosynthesis: colimit_photosynthesis!, light_limited_rate!, photosystem_coefficients!, photosystem_electron_transport!, temperature_dependence!, product_limited_rate!, rubisco_limited_rate!, temperature_corrected_value
 
 using ..Namespace: BetaFunction, BetaParameterG1, BetaParameterVcmax
 using ..Namespace: AbstractStomatalConductanceModel, BallBerrySM, GentineSM, LeuningSM, MedlynSM
