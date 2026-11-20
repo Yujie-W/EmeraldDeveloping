@@ -62,14 +62,14 @@ leaf_photosynthesis!(
             β::FT;
             rd_only::Bool = false) where {FT} = (
     if rd_only
-        photosystem_temperature_dependence!(config.METHODS.PS_METHODS, leaf.photosystem, air.state.p_air, leaf.energy.auxil.t);
+        temperature_dependence!(config.METHODS.PS_METHODS, leaf.photosystem, air.state.p_air, leaf.energy.auxil.t);
         leaf.flux.auxil.a_n .= -leaf.photosystem.auxil.r_d;
         leaf.flux.auxil.a_g .= 0;
 
         return nothing
     end;
 
-    photosystem_temperature_dependence!(config.METHODS.PS_METHODS, leaf.photosystem, air.state.p_air, leaf.energy.auxil.t);
+    temperature_dependence!(config.METHODS.PS_METHODS, leaf.photosystem, air.state.p_air, leaf.energy.auxil.t);
     photosystem_electron_transport!(config.METHODS.PS_METHODS, leaf.photosystem, leaf.flux.auxil.ppar, leaf.flux.auxil.p_CO₂_i; β = β);
     rubisco_limited_rate!(config.METHODS.PS_METHODS, leaf.photosystem, air.state.p_air, air.auxil.ps[2], leaf.flux.auxil.g_CO₂; β = β);
     light_limited_rate!(config.METHODS.PS_METHODS, leaf.photosystem, air.state.p_air, air.auxil.ps[2], leaf.flux.auxil.g_CO₂; β = β);

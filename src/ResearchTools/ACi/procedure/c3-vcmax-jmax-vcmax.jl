@@ -64,7 +64,7 @@ aci_fit(config::SPACConfig{FT},
         ps.trait.r_d25 = rd_lim_min * 1.2;
         config.METHODS.PS_METHODS.TD_Γ.VAL_REF = γ_lim_max * 0.8;
         for dfr in eachrow(df)
-            photosystem_temperature_dependence!(config.METHODS.PS_METHODS, ps, air.state.p_air, dfr.T_LEAF);
+            temperature_dependence!(config.METHODS.PS_METHODS, ps, air.state.p_air, dfr.T_LEAF);
             vcmax = (dfr.A_NET + ps.auxil.r_d) * (dfr.P_I + ps.auxil.k_m[1]) / (dfr.P_I - ps.auxil.γ_star) / temperature_correction(config.METHODS.PS_METHODS.TD_VCMAX_C3, dfr.T_LEAF);
             vcmax_guess = nanmax([vcmax_guess, vcmax]);
             vcmax_guess = nanmin([vcmax_guess, 100]);

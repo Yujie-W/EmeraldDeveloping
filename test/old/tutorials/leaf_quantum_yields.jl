@@ -21,7 +21,7 @@ using Test;
     t_leaf = 298.15;
     ppar = 100.0;
     p_co2 = 20.0;
-    EmeraldLand.Photosynthesis.photosystem_temperature_dependence!(config, ps, air, t_leaf);
+    EmeraldLand.Photosynthesis.temperature_dependence!(config, ps, air, t_leaf);
     EmeraldLand.Photosynthesis.photosystem_electron_transport!(ps, ppar, p_co2);
     EmeraldLand.Photosynthesis.rubisco_limited_rate!(ps, p_co2);
     EmeraldLand.Photosynthesis.light_limited_rate!(ps);
@@ -46,7 +46,7 @@ using Test;
     ps.trait.j_max25 = 160;
     ps.trait.r_d25 = 2;
 
-    EmeraldLand.Photosynthesis.photosystem_temperature_dependence!(config, ps, air, t_leaf);
+    EmeraldLand.Photosynthesis.temperature_dependence!(config, ps, air, t_leaf);
     EmeraldLand.Photosynthesis.photosystem_electron_transport!(ps, ppar, p_co2);
     EmeraldLand.Photosynthesis.rubisco_limited_rate!(ps, p_co2);
     EmeraldLand.Photosynthesis.light_limited_rate!(ps);

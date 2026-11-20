@@ -22,6 +22,7 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [sources]
 GriddingMachine = {rev = "wyujie", url = "https://github.com/CliMA/GriddingMachine.jl.git"}
+Photosynthesis = {rev = "wyujie", url = "https://github.com/Yujie-W/Photosynthesis.jl.git"}
 
 [compat]
 DataFrames = "1.8.1"

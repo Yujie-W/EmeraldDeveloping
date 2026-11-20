@@ -2,7 +2,7 @@
 
 julia_version = "1.13.3"
 manifest_format = "2.1"
-project_hash = "ec1291c4780fefcc3f09180fbc5a7e820c0dcf3c"
+project_hash = "bd18dba5a6d5b635b7be6c3fd3f0d23718af37eb"
 
 [[deps.Accessors]]
 deps = ["CompositionsBase", "ConstructionBase", "Dates", "InverseFunctions", "MacroTools"]
@@ -710,8 +710,9 @@ version = "2.8.11"
 
 [[deps.Photosynthesis]]
 deps = ["DocStringExtensions", "PkgUtility", "Test"]
-git-tree-sha1 = "4b03a0c63d33ae842dc7a740ae4afdc0bc02f2c3"
-registries = "General"
+git-tree-sha1 = "34f8db8022079b374c87cd3e700003903c800d95"
+repo-rev = "wyujie"
+repo-url = "https://github.com/Yujie-W/Photosynthesis.jl.git"
 uuid = "537ec7c9-aaee-45d0-8af0-4b77892958a6"
 version = "0.6.0"
 
