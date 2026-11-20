@@ -1,18 +1,11 @@
-using QuadGK: quadgk
+# using QuadGK: quadgk
 
-const KAPPA = 0.4
-const GRAVITY = 9.80665
-const DRAG_COEF = 0.25
-const RSL_CR = 0.3
-const BETA_NEUTRAL_MAX = 0.35
-const GROUND_ROUGHNESS = 0.01
 const RSL_C2 = 0.5
-const DEFAULT_UREF = 5.169
-const DEFAULT_MIN_WIND = 0.1
-const CP_AIR = 1004.64
-const RD_AIR = 287.05
-const RV_WATER = 461.5
-const P0 = 100000.0
+
+const DEFAULT_UREF = 5.169;
+const DEFAULT_MIN_WIND = 0.1;
+const RD_AIR = 287.05;
+const P0 = 100000.0;
 
 function checked_number(name, value; positive=false, nonnegative=false, finite=true)
     value isa Real || throw(ArgumentError("$name must be a real scalar."))
@@ -24,62 +17,21 @@ function checked_number(name, value; positive=false, nonnegative=false, finite=t
     return x
 end
 
-phi_m(x) = x < 0 ? (1 - 16*x)^(-0.25) : 1 + 5*x
-phi_c(x) = x < 0 ? (1 - 16*x)^(-0.5) : 1 + 5*x
 
-function neutral_beta(hc, pai)
-    # ObuFunc, source lines 759-760 (sparse-canopy adjustment).
-    return min(sqrt((KAPPA/log1p(hc/GROUND_ROUGHNESS))^2 + RSL_CR*pai),
-               BETA_NEUTRAL_MAX)
-end
 
-function stable_beta(LcL, beta_neutral)
-    lo, hi = 0.0, beta_neutral
-    for _ in 1:70
-        mid = (lo + hi)/2
-        if 5*LcL*mid^3 + mid - beta_neutral > 0
-            hi = mid
-        else
-            lo = mid
-        end
-    end
-    return (lo + hi)/2
-end
-
-function canopy_state(hc, pai, invL)
-    Lc = hc/(DRAG_COEF*pai)
-    beta_neutral = neutral_beta(hc, pai)
-    LcL = Lc*invL
-    if invL <= 0
-        b = 16*LcL*beta_neutral^4
-        beta = sqrt((-b + hypot(b, 2*beta_neutral^2))/2)
-    else
-        beta = stable_beta(LcL, beta_neutral)
-    end
-    beta = clamp(beta, 0.2, 0.5)  # Supplied Fortran, not the revised 2026 v2.
-    h = min(hc, beta^2*Lc*(-expm1(-0.25*pai/beta^2)))
-    d = hc - h
-    Sc = (1-beta_neutral/BETA_NEUTRAL_MAX) + beta_neutral/BETA_NEUTRAL_MAX *
-         (0.5 + 0.3*tanh(2*LcL))
-    c1m = (1-KAPPA/(2*beta*phi_m(h*invL)))*exp(RSL_C2/2)
-    c1c = (1-Sc*KAPPA/(2*beta*phi_c(h*invL)))*exp(RSL_C2/2)
-    eta = min(hc/(2*beta^2*Lc), 20.0)  # Source lines 481-495, turb_type=1.
-    return (; hc, pai, invL, Lc, beta_neutral, beta, h, d, Sc, c1m, c1c,
-              eta, decayLength=hc/eta)
-end
 
 # Integrate the COMPLETE gradient over a finite interval. This is algebraically
 # identical to log - psi + psi_hat differences in GetPsiRSL, without subtracting
 # two nearly equal improper integrals. t=(z-d)/(hc-d) is dimensionless.
 function profile_factor(z, state; scalar=false)
     z >= state.hc || throw(ArgumentError("RSL factors require z >= canopy height."))
-    offset = scalar ? 0.0 : KAPPA/state.beta
+    offset = scalar ? 0.0 : K_VON_KARMAN()/state.β
     z == state.hc && return offset
-    tmax = max(1.0,(z-state.d)/state.h)
+    tmax = max(1.0,(z-state.d)/state.hd)
     tmax == 1 && return offset
-    c1 = scalar ? state.c1c : state.c1m
-    phi = scalar ? phi_c : phi_m
-    integrand(t) = phi(t*state.h*state.invL) *
+    c1 = scalar ? state.c₁c : state.c₁m
+    phi = scalar ? Φ_heat_vapor : Φ_momentum
+    integrand(t) = phi(t*state.hd*state.invL) *
                    (1-c1*exp(-RSL_C2*t/2))/t
     val, _ = quadgk(integrand, 1.0, tmax; rtol=1e-9, atol=1e-11)
     factor = offset + val
@@ -88,13 +40,6 @@ function profile_factor(z, state; scalar=false)
     return factor
 end
 
-function validate_geometry(hc, pai, zref)
-    hc = checked_number("hc", hc; positive=true)
-    pai = checked_number("pai", pai; positive=true)
-    zref = checked_number("zref", zref; positive=true)
-    zref > hc || throw(ArgumentError("zref must exceed hc."))
-    return hc, pai, zref
-end
 
 function measured_wind(uref, wind_speed, wind_u, wind_v, wind_height, zref;
                        allow_demo_default=true)
@@ -161,7 +106,7 @@ function required_fields(data, names, label)
     isempty(missing_names) || throw(ArgumentError("$label is missing: $(join(missing_names, ", "))."))
 end
 
-function flux_state(; tair, pair, qair, H, LE, cp=CP_AIR, latent_heat=nothing)
+function flux_state(; tair, pair, qair, H, LE, cp=CP_D(), latent_heat=nothing)
     tair = checked_number("tair (K)",tair; positive=true)
     pair = checked_number("pair (Pa)",pair; positive=true)
     qair = checked_number("qair (kg/kg)",qair; nonnegative=true)
@@ -172,7 +117,7 @@ function flux_state(; tair, pair, qair, H, LE, cp=CP_AIR, latent_heat=nothing)
     Lv = latent_heat === nothing ? 2.501e6-2361*(tair-273.15) :
          checked_number("latent_heat (J/kg)",latent_heat; positive=true)
     Lv > 0 || throw(ArgumentError("Temperature gives nonpositive latent heat."))
-    rho = pair/(RD_AIR*tair*(1+(RV_WATER/RD_AIR-1)*qair))
+    rho = pair/(RD_AIR*tair*(1+(R_V() /RD_AIR-1)*qair))
     exner_inverse = (P0/pair)^(RD_AIR/cp)
     theta_ref = tair*exner_inverse
     theta_v = theta_ref*(1+0.61*qair)
@@ -198,7 +143,7 @@ function obukhov_length(; ustar, kwargs...)
     therm = flux_state(; kwargs...)
     therm.Fvirtual == 0 && return Inf
     ustar > 0 || throw(ArgumentError("Nonzero buoyancy flux requires nonzero ustar in this model."))
-    return -therm.theta_v*ustar^3/(KAPPA*GRAVITY*therm.Fvirtual)
+    return -therm.theta_v*ustar^3/(K_VON_KARMAN()*GRAVITY()*therm.Fvirtual)
 end
 
 function gradient_state(gradients)
@@ -249,13 +194,13 @@ function automatic_state(hc,pai,zref,speed,zwind,zbound,fluxes,gradients,
     end
     function evaluate(invL)
         s = canopy_state(hc,pai,invL)
-        ustar = speed*KAPPA/profile_factor(zwind,s)
+        ustar = speed*K_VON_KARMAN()/profile_factor(zwind,s)
         if source == :fluxes
-            target = -KAPPA*GRAVITY*therm.Fvirtual/(therm.theta_v*ustar^3)
+            target = -K_VON_KARMAN()*GRAVITY()*therm.Fvirtual/(therm.theta_v*ustar^3)
         else
             Fc = profile_factor(zref,s; scalar=true)
-            tvstar = KAPPA*therm.delta_virtual/Fc
-            target = KAPPA*GRAVITY*tvstar/(therm.theta_v*ustar^2)
+            tvstar = K_VON_KARMAN()*therm.delta_virtual/Fc
+            target = K_VON_KARMAN()*GRAVITY()*tvstar/(therm.theta_v*ustar^2)
         end
         return s,target
     end
@@ -340,7 +285,6 @@ wind_profile(..., L=:auto) to couple the height conversion to thermal forcing.
 """
 function reference_wind_speed(; wind_speed=nothing,wind_u=nothing,wind_v=nothing,
                                 wind_height,zref,hc,pai,L=Inf,stability_limits=:source)
-    hc,pai,zref = validate_geometry(hc,pai,zref)
     stability_limits in (:source,:none) || throw(ArgumentError("stability_limits must be :source or :none."))
     speed,zwind,_ = measured_wind(nothing,wind_speed,wind_u,wind_v,wind_height,zref;
                                  allow_demo_default=false)
@@ -404,7 +348,6 @@ function wind_profile(; hc=21,pai=5.051612734794617,zref=46,uref=nothing,
     outputDir=joinpath(@__DIR__,"wind_profile_results"),
     saveResults::Bool=true,makePlot::Bool=true,showPlot::Bool=true,verbose::Bool=true)
 
-    hc,pai,zref = validate_geometry(hc,pai,zref)
     dz = checked_number("dz",dz; positive=true)
     minWind = checked_number("minWind",minWind; nonnegative=true)
     solver_rtol = checked_number("solver_rtol",solver_rtol; positive=true)
@@ -427,9 +370,9 @@ function wind_profile(; hc=21,pai=5.051612734794617,zref=46,uref=nothing,
             limited,inverse_L_residual=missing,thermal=nothing)
     end
     L_used = state.invL == 0 ? Inf : 1/state.invL
-    ustar = speed*KAPPA/profile_factor(zwind,state)
-    uref_used = ustar/KAPPA*profile_factor(zref,state)
-    uCanopy = ustar/state.beta
+    ustar = speed*K_VON_KARMAN()/profile_factor(zwind,state)
+    uref_used = ustar/K_VON_KARMAN()*profile_factor(zref,state)
+    uCanopy = ustar/state.β
     floor_used = min(minWind,uCanopy)
     diagnostics = merge(diagnostics,(; wind_source,measured_wind=speed,
                         wind_height=zwind,minWind_effective=floor_used,
@@ -439,7 +382,7 @@ function wind_profile(; hc=21,pai=5.051612734794617,zref=46,uref=nothing,
     z = height_grid(hc,zref,dz,heights)
     raw = map(z) do zz
         zz == 0 ? 0.0 : zz <= hc ? uCanopy*exp((zz-hc)/state.decayLength) :
-        ustar/KAPPA*profile_factor(zz,state)
+        ustar/K_VON_KARMAN()*profile_factor(zz,state)
     end
     u = [0 < zz < hc ? max(uu,floor_used) : uu for (zz,uu) in zip(z,raw)]
     all(isfinite,u) && all(x -> x >= 0,u) || error("Nonfinite or negative wind encountered.")
@@ -447,7 +390,7 @@ function wind_profile(; hc=21,pai=5.051612734794617,zref=46,uref=nothing,
     diagnostics.limited && @warn "Stability bound is active; inspect L_physical, config.L, closure_converged, and inverse_L_residual." L_physical=diagnostics.L_physical L_used
     profile = (; Height_m=z,Wind_m_s=u,Wind_unfloored_m_s=raw,Relative_height=z./hc)
     result = (; profile,config=cfg,ustar,uCanopy,displacementHeight=state.d,
-                beta=state.beta,Lc=state.Lc,decayLength=state.decayLength,
+                beta=state.β,Lc=state.Lc,decayLength=state.decayLength,
                 eta=state.eta,diagnostics)
     saveResults && save_results(result)
     if makePlot
@@ -457,8 +400,8 @@ function wind_profile(; hc=21,pai=5.051612734794617,zref=46,uref=nothing,
         Base.invokelatest(draw_profile,z,u,cfg,saveResults,showPlot)
     end
     if verbose
-        @printf("Reference wind: %.6f m/s at %.3f m; u*: %.6f m/s; U(hc): %.6f m/s\n",uref_used,zref,ustar,uCanopy)
-        @printf("L used: %g m; status: %s; L physical: %g m\n",L_used,string(diagnostics.status),diagnostics.L_physical)
+        # @printf("Reference wind: %.6f m/s at %.3f m; u*: %.6f m/s; U(hc): %.6f m/s\n",uref_used,zref,ustar,uCanopy)
+        # @printf("L used: %g m; status: %s; L physical: %g m\n",L_used,string(diagnostics.status),diagnostics.L_physical)
     end
     return result
 end
@@ -469,8 +412,8 @@ function save_results(result)
     open(joinpath(cfg.outputDir,"wind_profile.csv"),"w") do io
         println(io,"Height_m,Wind_m_s,Wind_unfloored_m_s,Relative_height")
         for i in eachindex(p.Height_m)
-            @printf(io,"%.17g,%.17g,%.17g,%.17g\n",p.Height_m[i],p.Wind_m_s[i],
-                    p.Wind_unfloored_m_s[i],p.Relative_height[i])
+            # @printf(io,"%.17g,%.17g,%.17g,%.17g\n",p.Height_m[i],p.Wind_m_s[i],
+            #         p.Wind_unfloored_m_s[i],p.Relative_height[i])
         end
     end
     open(joinpath(cfg.outputDir,"wind_profile_diagnostics.txt"),"w") do io
@@ -508,19 +451,4 @@ function wind_profile(cfg::NamedTuple; kwargs...)
         return _wind_profile_from_spac(cfg; kwargs...)
     end
     return wind_profile(; cfg...,kwargs...)
-end
-
-function draw_profile(z,u,cfg,saveResults,showPlot)
-    title_text = isinf(cfg.L) ? "Canopy wind profile (neutral)" :
-                 @sprintf("Canopy wind profile (L = %.3g m)",cfg.L)
-    fig = Plots.plot(u,z; color=:blue,linewidth=1.8,label="Wind profile",
-        xlabel="Wind speed (m/s)",ylabel="Height above ground (m)",
-        title=title_text,ylims=(0,cfg.zref),legend=:best,grid=true,
-        background_color=:white,dpi=180)
-    xmax = max(maximum(u),cfg.uref,0.1)*1.05
-    Plots.plot!(fig,[0,xmax],[cfg.hc,cfg.hc]; color=:black,linestyle=:dash,label="Canopy top")
-    Plots.scatter!(fig,[cfg.uref],[cfg.zref]; color=:red,label="Reference wind")
-    saveResults && Plots.savefig(fig,joinpath(cfg.outputDir,"wind_profile.png"))
-    showPlot && display(fig)
-    return fig
 end
