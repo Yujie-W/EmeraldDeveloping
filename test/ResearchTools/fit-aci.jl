@@ -14,8 +14,8 @@ import Photosynthesis as PS
 
     @testset "C3 Jmax" begin
         config = ERT.LeafLevelSetup.leaf_level_config(Float64);
-        config.METHODS.PS_METHODS.C3_AC_METHOD = PS.AcMethodC3VcmaxPi();
-        config.METHODS.PS_METHODS.C3_AJ_METHOD = PS.AjMethodC3JmaxPi();
+        config.METHODS.PS_METHODS.C3_AC_METHOD = PS.AcMethodC3Vcmax();
+        config.METHODS.PS_METHODS.C3_AJ_METHOD = PS.AjMethodC3Jmax();
         config.METHODS.PS_METHODS.C3_AP_METHOD = PS.ApMethodC3Vcmax();
         config.METHODS.PS_METHODS.COLIMIT_J = PS.ColimitJCLM(Float64);
         config.METHODS.PS_METHODS.FLUORESCENCE_METHOD_C3 = PS.KNFluorescenceModel{Float64}();
@@ -29,8 +29,8 @@ import Photosynthesis as PS
 
     @testset "C3 Vqmax" begin
         config = ERT.LeafLevelSetup.leaf_level_config(Float64);
-        config.METHODS.PS_METHODS.C3_AC_METHOD = PS.AcMethodC3VcmaxPi();
-        config.METHODS.PS_METHODS.C3_AJ_METHOD = PS.AjMethodC3VqmaxPi();
+        config.METHODS.PS_METHODS.C3_AC_METHOD = PS.AcMethodC3Vcmax();
+        config.METHODS.PS_METHODS.C3_AJ_METHOD = PS.AjMethodC3Vqmax();
         config.METHODS.PS_METHODS.C3_AP_METHOD = PS.ApMethodC3Vcmax();
         config.METHODS.PS_METHODS.COLIMIT_J = PS.SerialColimit();
         config.METHODS.PS_METHODS.FLUORESCENCE_METHOD_C3 = PS.CytochromeFluorescenceModel();
@@ -44,7 +44,7 @@ import Photosynthesis as PS
 
     @testset "C4 Vcmax" begin
         config = ERT.LeafLevelSetup.leaf_level_config(Float64);
-        config.METHODS.PS_METHODS.C4_AP_METHOD = PS.ApMethodC4VcmaxPi();
+        config.METHODS.PS_METHODS.C4_AP_METHOD = PS.ApMethodC4Vcmax();
         config.METHODS.PS_METHODS.FLUORESCENCE_METHOD_C4 = PS.KNFluorescenceModel{Float64}();
         result = ERT.ACi.aci_fit!(config, df4, "C4", ["Vcmax25"]);
         @test !any(isnan.(result[1]));
@@ -54,7 +54,7 @@ import Photosynthesis as PS
 
     @testset "C4 Vpmax" begin
         config = ERT.LeafLevelSetup.leaf_level_config(Float64);
-        config.METHODS.PS_METHODS.C4_AP_METHOD = PS.ApMethodC4VpmaxPi();
+        config.METHODS.PS_METHODS.C4_AP_METHOD = PS.ApMethodC4Vpmax();
         config.METHODS.PS_METHODS.FLUORESCENCE_METHOD_C4 = PS.KNFluorescenceModel{Float64}();
         result = ERT.ACi.aci_fit!(config, df4, "C4", ["Vcmax25"]);
         @test !any(isnan.(result[1]));

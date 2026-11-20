@@ -5,7 +5,7 @@ using PkgUtility.MathTools: ReduceStepMethodND, SolutionToleranceND, find_peak, 
 
 using Photosynthesis: LeafPhotosystem
 using Photosynthesis: C3Trait, C4Trait
-using Photosynthesis: AcMethodC3VcmaxPi, AcMethodC4Vcmax, AjMethodC3JmaxPi, AjMethodC3VqmaxPi, AjMethodC4JPSII, ApMethodC3Vcmax, ApMethodC4VcmaxPi, ApMethodC4VpmaxPi
+using Photosynthesis: AcMethodC3Vcmax, AcMethodC4Vcmax, AjMethodC3Jmax, AjMethodC3Vqmax, AjMethodC4JPSII, ApMethodC3Vcmax, ApMethodC4Vcmax, ApMethodC4Vpmax
 using Photosynthesis: photosynthesis!, photosystem_temperature_dependence!, temperature_correction
 
 using ..Namespace: SPACConfig

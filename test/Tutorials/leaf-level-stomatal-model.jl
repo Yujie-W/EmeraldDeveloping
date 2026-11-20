@@ -8,7 +8,7 @@ import Emerald.SPAC as ESPAC
 
 config_c4_new = ERT.LeafLevelSetup.leaf_level_config(Float64);
 config_c4_new.FEATURES.NEW_C4_STOMATAL_METHODS = true;
-config_c4_new.METHODS.C4_AP_METHOD = ENS.ApMethodC4VpmaxPi();
+config_c4_new.METHODS.C4_AP_METHOD = ENS.ApMethodC4Vpmax();
 config_c4_new.METHODS.STOMATAL_MODEL = ENS.Sperry2SM{Float64}();
 
 

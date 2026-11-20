@@ -25,8 +25,8 @@ function site_config(settings::Union{Dict,OrderedDict})
 
     # set up the photosynthesis model
     if settings["C3_MODEL"] == "Jmax"
-        config.METHODS.PS_METHODS.C3_AC_METHOD = Photosynthesis.AcMethodC3VcmaxPi();
-        config.METHODS.PS_METHODS.C3_AJ_METHOD = Photosynthesis.AjMethodC3JmaxPi();
+        config.METHODS.PS_METHODS.C3_AC_METHOD = Photosynthesis.AcMethodC3Vcmax();
+        config.METHODS.PS_METHODS.C3_AJ_METHOD = Photosynthesis.AjMethodC3Jmax();
         config.METHODS.PS_METHODS.C3_AP_METHOD = Photosynthesis.ApMethodC3Vcmax();
         config.METHODS.PS_METHODS.COLIMIT_J = Photosynthesis.ColimitJCLM(settings["FT"]);
         # TODO: these results are from the unpublished research I am working on, will make them official parameter sets when the paper is accepted
@@ -37,8 +37,8 @@ function site_config(settings::Union{Dict,OrderedDict})
         config.METHODS.PS_METHODS.TD_Γ.VAL_REF = 4.67;
         config.METHODS.PS_METHODS.TD_Γ.ΔHA = 11800;
     elseif settings["C3_MODEL"] == "Vqmax"
-        config.METHODS.PS_METHODS.C3_AC_METHOD = Photosynthesis.AcMethodC3VcmaxPi();
-        config.METHODS.PS_METHODS.C3_AJ_METHOD = Photosynthesis.AjMethodC3VqmaxPi();
+        config.METHODS.PS_METHODS.C3_AC_METHOD = Photosynthesis.AcMethodC3Vcmax();
+        config.METHODS.PS_METHODS.C3_AJ_METHOD = Photosynthesis.AjMethodC3Vqmax();
         config.METHODS.PS_METHODS.C3_AP_METHOD = Photosynthesis.ApMethodC3Vcmax();
         config.METHODS.PS_METHODS.COLIMIT_J = Photosynthesis.SerialColimit();
         # TODO: these results are from the unpublished research I am working on, will make them official parameter sets when the paper is accepted
@@ -63,13 +63,13 @@ function site_config(settings::Union{Dict,OrderedDict})
     if settings["C4_MODEL"] == "Vcmax"
         config.METHODS.PS_METHODS.C4_AC_METHOD = Photosynthesis.AcMethodC4Vcmax();
         config.METHODS.PS_METHODS.C4_AJ_METHOD = Photosynthesis.AjMethodC4JPSII();
-        config.METHODS.PS_METHODS.C4_AP_METHOD = Photosynthesis.ApMethodC4VcmaxPi();
+        config.METHODS.PS_METHODS.C4_AP_METHOD = Photosynthesis.ApMethodC4Vcmax();
         config.METHODS.PS_METHODS.TD_R_C4 = Photosynthesis.RespirationTDCLMC4(settings["FT"]);
         config.METHODS.PS_METHODS.TD_VCMAX_C4 = Photosynthesis.VcmaxTDCLMC4(settings["FT"]);
     elseif settings["C4_MODEL"] == "Vpmax"
         config.METHODS.PS_METHODS.C4_AC_METHOD = Photosynthesis.AcMethodC4Vcmax();
         config.METHODS.PS_METHODS.C4_AJ_METHOD = Photosynthesis.AjMethodC4JPSII();
-        config.METHODS.PS_METHODS.C4_AP_METHOD = Photosynthesis.ApMethodC4VpmaxPi();
+        config.METHODS.PS_METHODS.C4_AP_METHOD = Photosynthesis.ApMethodC4Vpmax();
         config.METHODS.PS_METHODS.TD_R_C4 = Photosynthesis.RespirationTDCLMC4(settings["FT"]);
         config.METHODS.PS_METHODS.TD_VCMAX_C4 = Photosynthesis.VcmaxTDCLMC4(settings["FT"]);
         config.METHODS.PS_METHODS.TD_VPMAX = Photosynthesis.VpmaxTDBoyd(settings["FT"]);

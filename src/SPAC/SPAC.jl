@@ -7,9 +7,9 @@ using PkgUtility.PhysicalChemistry: latent_heat_melt, relative_surface_tension, 
 using PkgUtility.UniversalConstants: CP_L_MOL, F_N₂, F_O₂, GAS_R, T₀, Λ_THERMAL_H₂O, ρ_H₂O, energy_to_photon
 
 
-using Photosynthesis: AcMethodC3VcmaxPi, AcMethodC4Vcmax
-using Photosynthesis: AjMethodC3JmaxPi, AjMethodC3VqmaxPi, AjMethodC4JPSII
-using Photosynthesis: ApMethodC3Inf, ApMethodC3Vcmax, ApMethodC4VcmaxPi, ApMethodC4VpmaxPi
+using Photosynthesis: AcMethodC3Vcmax, AcMethodC4Vcmax
+using Photosynthesis: AjMethodC3Jmax, AjMethodC3Vqmax, AjMethodC4JPSII
+using Photosynthesis: ApMethodC3Inf, ApMethodC3Vcmax, ApMethodC4Vcmax, ApMethodC4Vpmax
 using Photosynthesis: AbstractTemperatureDependency, Arrhenius, ArrheniusPeak, ArrheniusPeak2, Q10, Q10Peak, Q10PeakHT, Q10PeakLTHT
 using Photosynthesis: C3Trait, C4Trait
 

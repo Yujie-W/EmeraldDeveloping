@@ -6,8 +6,8 @@ using Emerald.SPAC
 FT = Float64;
 config = Emerald.Namespace.SPACConfig(FT);
 #=
-        config.METHODS.C3_AC_METHOD = Namespace.AcMethodC3VcmaxPi();
-        config.METHODS.C3_AJ_METHOD = Namespace.AjMethodC3VqmaxPi();
+        config.METHODS.C3_AC_METHOD = Namespace.AcMethodC3Vcmax();
+        config.METHODS.C3_AJ_METHOD = Namespace.AjMethodC3Vqmax();
         config.METHODS.C3_AP_METHOD = Namespace.ApMethodC3Vcmax();
         config.METHODS.COLIMIT_J = Namespace.SerialColimit();
         config.METHODS.TD_VCMAX_C3.ΔHA = 63000;

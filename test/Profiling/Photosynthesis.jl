@@ -14,8 +14,8 @@ import Emerald.SPAC as ESPAC
 config = ENS.SPACConfig(Float64);
 cyto_model = false;
 if cyto_model
-    config.METHODS.C3_AC_METHOD = ENS.AcMethodC3VcmaxPi();
-    config.METHODS.C3_AJ_METHOD = ENS.AjMethodC3VqmaxPi();
+    config.METHODS.C3_AC_METHOD = ENS.AcMethodC3Vcmax();
+    config.METHODS.C3_AJ_METHOD = ENS.AjMethodC3Vqmax();
     config.METHODS.C3_AP_METHOD = ENS.ApMethodC3Vcmax();
     config.METHODS.COLIMIT_J = ENS.SerialColimit();
     config.METHODS.FLUORESCENCE_METHOD_C3 = ENS.CytochromeFluorescenceModel();

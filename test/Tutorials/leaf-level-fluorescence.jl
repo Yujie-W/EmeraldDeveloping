@@ -12,8 +12,8 @@ import Photosynthesis as PS
     @testset "C3 - Jmax + Platespect" verbose = true begin
         # these config settings are the default methods, I am just being explicit here
         config = ERT.LeafLevelSetup.leaf_level_config(Float64);
-        config.METHODS.PS_METHODS.C3_AC_METHOD = PS.AcMethodC3VcmaxPi();
-        config.METHODS.PS_METHODS.C3_AJ_METHOD = PS.AjMethodC3JmaxPi();
+        config.METHODS.PS_METHODS.C3_AC_METHOD = PS.AcMethodC3Vcmax();
+        config.METHODS.PS_METHODS.C3_AJ_METHOD = PS.AjMethodC3Jmax();
         config.METHODS.PS_METHODS.C3_AP_METHOD = PS.ApMethodC3Vcmax();
         config.METHODS.PS_METHODS.COLIMIT_J = PS.ColimitJCLM(Float64);
         config.METHODS.PS_METHODS.FLUORESCENCE_METHOD_C3 = PS.KNFluorescenceModel{Float64}();
